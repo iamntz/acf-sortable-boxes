@@ -90,11 +90,11 @@ class ntz_acf_sortable extends acf_field {
     $field_template = apply_filters( 'ntz-acf-template/sortable/create-field', 'create-field' );
     echo $this->tpl_helper( $field_template, array(
       "items" => array(
-        array( "sortable_size" => 2 ),
-        array( "sortable_size" => 2 ),
-        array( "sortable_size" => 3 ),
+        array( "colspan" => 2 ),
+        array( "colspan" => 2 ),
+        array( "colspan" => 3 ),
         array(),
-        array( "sortable_size" => 4 ),
+        array( "colspan" => 4 ),
         array(),
         array(),
         array(),

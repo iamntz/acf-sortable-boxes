@@ -13,4 +13,10 @@ jQuery(document).ready(function($){
     return false;
   });
 
+
+  sortableWrapper.on('change', '.js-sortableLayout__changeSize', function(){
+    var parent = $(this).closest('.js-sortableLayout__item');
+    parent.attr('data-colspan', this.value);
+    return false;
+  });
 });

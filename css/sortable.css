@@ -6,20 +6,29 @@
 .sortableLayout__item-placeholder,
 .sortableLayout__item {
 	height:200px;
-	outline:1px solid #000;
-	margin:10px;
+	border:1px solid #999;
+	margin:9px;
 	float:left;
 	position:relative;
 	background:#fff;
 }
 
+.sortableLayout__changeSize,
 .sortableLayout__flipper {
 	position:absolute;
 	bottom:5px;
 	right:5px;
 	font-size:24px;
 	color:#444;
-	outline:none
+	outline:none;
+	z-index:20;
+}
+.sortableLayout__changeSize {
+	bottom:auto;
+	top:5px;
+	width:70px !important;
+	font-size:.8em;
+	padding:0 !important;
 }
 
 .sortableLayout__item  {
@@ -27,20 +36,20 @@
 }
 
 .sortableLayout__item-placeholder {
-	background:#ccc;
+	background:#DAFFE3;
 }
 
-.sortableLayout__item-placeholder[data-size="2"],
-.sortableLayout__item[data-size="2"] {
+.sortableLayout__item-placeholder[data-colspan="2"],
+.sortableLayout__item[data-colspan="2"] {
 	width:420px;
 }
-.sortableLayout__item-placeholder[data-size="3"],
-.sortableLayout__item[data-size="3"] {
+.sortableLayout__item-placeholder[data-colspan="3"],
+.sortableLayout__item[data-colspan="3"] {
 	width:640px;
 }
 
-.sortableLayout__item-placeholder[data-size="4"],
-.sortableLayout__item[data-size="4"] {
+.sortableLayout__item-placeholder[data-colspan="4"],
+.sortableLayout__item[data-colspan="4"] {
 	width:860px;
 }
 
@@ -49,14 +58,16 @@
 	position:absolute;
 	left:0;
 	top:0;
-	width:100%;
-	height:100%;
+	bottom:0;
+	right:0;
+	padding:15px;
 	background:#fff;
 }
 
 .sortableLayout__item-front {
 	cursor:move;
 	z-index:5;
+	background:url(../images/picture-icon.png) no-repeat center center;
 }
 
 
@@ -67,4 +78,9 @@
 
 .sortableLayout__item.flipped .sortableLayout__item-back {
 	display:block;
+}
+
+.sortableLayout__item-side .button {
+	display:block;
+	width:100%;
 }
