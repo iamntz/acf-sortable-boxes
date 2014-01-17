@@ -1,10 +1,15 @@
 <div class="sortableLayout__item js-sortableLayout__item" data-colspan="{{colspan}}">
-  <select class="sortableLayout__changeSize js-sortableLayout__changeSize" name="colspan">
-    <option>Spanning</option>
-    <option {{colspan_1_selected}}>1</option>
-    <option {{colspan_2_selected}}>2</option>
-    <option {{colspan_3_selected}}>3</option>
-    <option {{colspan_4_selected}}>4</option>
+<input type="hidden" name="{{field_name}}" value="" />
+  <select class="sortableLayout__changeSize js-sortableLayout__changeSize" name="colspan[]">
+    <optgroup label="Spanning">
+      <option {{colspan_1_selected}}>1</option>
+      <option {{colspan_2_selected}}>2</option>
+      <option {{colspan_3_selected}}>3</option>
+      <option {{colspan_4_selected}}>4</option>
+    </optgroup>
+    <optgroup label="Other">
+      <option value="x">Delete</option>
+    </optgroup>
   </select>
 
   <div class="sortableLayout__item-side sortableLayout__item-front"{{#image}} style="background-image:url({{image}})"{{/image}}>
@@ -13,9 +18,11 @@
 
   <div class="sortableLayout__item-side sortableLayout__item-back">
     <ul>
-      <li><button class="button-secondary button button-small">Pick Image</button></li>
+      <li>
+        <button class="button-secondary button button-small js-uploader">Pick Image</button>
+      </li>
       <li><input type="text" placeholder="External URL" value="{{url}}" /></li>
-      <li><label><input type="checkbox" name="{{open_in_new_window}}" {{open_in_new_window_checked}} /> Open in new window?</label></li>
+      <li><label><input type="checkbox" name="open_in_new_window[]" {{open_in_new_window_checked}} /> Open in new window?</label></li>
     </ul>
     <a href="#" class="sortableLayout__flipper js-sortableLayout__flipper">&laquo;</a>
   </div>

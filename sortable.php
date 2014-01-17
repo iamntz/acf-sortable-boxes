@@ -40,20 +40,23 @@ class ntz_acf_sortable extends acf_field {
 
   protected function tpl_helper( $template, $content = array() ){
     $path = $this->settings['path'];
-    $mustache = new Mustache_Engine(array(
+    $options = array(
       'template_class_prefix'  => '__cache',
       'cache'                  => $path . '/views/cache',
       'cache_file_mode'        => 0666,
       'cache_lambda_templates' => true,
       'loader'                 => new Mustache_Loader_FilesystemLoader( $path . '/views' ),
       'partials_loader'        => new Mustache_Loader_FilesystemLoader( $path . '/views/partials' ),
+      'helpers' => array(),
       'escape'                 => function($value) {
         return htmlspecialchars($value, ENT_COMPAT, 'UTF-8');
       },
       'charset'          => 'UTF-8',
       'logger'           => new Mustache_Logger_StreamLogger('php://stderr'),
       'strict_callables' => true,
-    ));
+    );
+
+    $mustache = new Mustache_Engine( $options );
 
     $tpl = $mustache->loadTemplate( $template );
     return $tpl->render( $content );
@@ -88,19 +91,16 @@ class ntz_acf_sortable extends acf_field {
 
   function create_field( $field ){
     $field_template = apply_filters( 'ntz-acf-template/sortable/create-field', 'create-field' );
-    echo $this->tpl_helper( $field_template, array(
+    $content = array(
       "items" => array(
-        array( "colspan" => 2 ),
-        array( "colspan" => 2 ),
-        array( "colspan" => 3 ),
-        array(),
-        array( "colspan" => 4 ),
-        array(),
-        array(),
-        array(),
-        array(),
+
+      ),
+      "tpl" => array(
+        "item" => file_get_contents( $this->settings['path'] . '/views/partials/sortable-item.mustache' )
       )
-    ) );
+    );
+
+    echo $this->tpl_helper( $field_template, $content );
   }
 
 
