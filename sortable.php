@@ -95,10 +95,7 @@ class ntz_acf_sortable extends acf_field {
     $field_template = apply_filters( 'ntz-acf-template/sortable/create-field', 'create-field' );
     $content = array(
       "field_name" => $field['name'],
-      "items" => $field['value'],
-      "tpl" => array(
-        "item" => file_get_contents( $this->settings['path'] . '/views/partials/sortable-item.mustache' )
-      )
+      "items" => $field['value']
     );
 
     echo $this->tpl_helper( $field_template, $content );
@@ -162,6 +159,8 @@ class ntz_acf_sortable extends acf_field {
         "colspan_3_selected" => selected( $value['colspan'][$key], 3, false ),
         "colspan_4_selected" => selected( $value['colspan'][$key], 4, false ),
       );
+
+      $parsed_value['thumb'] = $parsed_value['image_size_' . $parsed_value['colspan'] ];
 
       $new_value[] = apply_filters( 'ntz-acf-sortable/formatted-value', $parsed_value );
     }
