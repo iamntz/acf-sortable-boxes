@@ -1,11 +1,8 @@
-jQuery(document).ready(function($){
-
-});
-
 
 
 jQuery(document).ready(function($){
   var sortableWrapper = $('.js-ntzSortableLayout');
+
   sortableWrapper.sortable({
     forceHelperSize     : true,
     forcePlaceholderSize: true,
@@ -20,12 +17,24 @@ jQuery(document).ready(function($){
   });
 
   sortableWrapper.on('click', '.js-uploader', function(){
-    var id = $(this).closest('.thumbnail').attr('data-id');
+    var $this = $(this);
+    var parent = $this.closest('.js-sortableLayout__item');
+    var target = $this.next();
+    var media = $this.data('ntzwpmedia') || new NtzWPMedia({
+      trigger : $this,
+      target : target,
+      onSelect : function(e){
+        target.val( e.id );
 
-    acf.fields.gallery.set({ $el : $(this).closest('.js-ntzSortableLayout') }).popup();
+        $('.js-image-size-1 img', parent).attr( 'src', e.sizes['column-layout-1'].url );
+        $('.js-image-size-2 img', parent).attr( 'src', e.sizes['column-layout-2'].url );
+        $('.js-image-size-3 img', parent).attr( 'src', e.sizes['column-layout-3'].url );
+        $('.js-image-size-4 img', parent).attr( 'src', e.sizes['column-layout-4'].url );
+      }
+    });
 
-
-    $(this).blur();
+    $this.data( 'ntzwpmedia', media );
+    media.open();
     return false;
   });
 
@@ -44,7 +53,7 @@ jQuery(document).ready(function($){
   });
 
   $('.js-sortableLayout__addItem').on('click', function(){
-    var itemTpl = $('#ntz-sortableLayoutItem').html();
+    var itemTpl = $(this).parent().next('.ntz-sortableLayoutItem').html();
 
     $(itemTpl).appendTo( sortableWrapper );
     return false;

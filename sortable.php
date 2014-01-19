@@ -64,7 +64,8 @@ class ntz_acf_sortable extends acf_field {
 
 
   public function input_admin_enqueue_scripts(){
-    wp_register_script( 'ntz-sortable', $this->settings['dir'] . 'js/sortable.js', array( 'jquery-ui-sortable' ), $this->settings['version'] );
+    wp_register_script( 'ntz-media', $this->settings['dir'] . 'js/ntz-media.js', array( "media-views" ), $this->settings['version'] );
+    wp_register_script( 'ntz-sortable', $this->settings['dir'] . 'js/sortable.js', array( 'ntz-media', 'jquery-ui-sortable' ), $this->settings['version'] );
     wp_register_style( 'ntz-sortable', $this->settings['dir'] . 'css/sortable.css', array(), $this->settings['version'] );
 
     wp_enqueue_script(array(
@@ -90,40 +91,17 @@ class ntz_acf_sortable extends acf_field {
   */
 
   function create_field( $field ){
+
     $field_template = apply_filters( 'ntz-acf-template/sortable/create-field', 'create-field' );
     $content = array(
-      "items" => array(
-
-      ),
+      "field_name" => $field['name'],
+      "items" => $field['value'],
       "tpl" => array(
         "item" => file_get_contents( $this->settings['path'] . '/views/partials/sortable-item.mustache' )
       )
     );
 
     echo $this->tpl_helper( $field_template, $content );
-  }
-
-
-  /*
-  *  create_options()
-  *
-  *  Create extra options for your field. This is rendered when editing a field.
-  *  The value of $field['name'] can be used (like bellow) to save extra data to the $field
-  *
-  *  @type  action
-  *  @since 3.6
-  *  @date  23/01/13
-  *
-  *  @param $field  - an array holding all the field's data
-  */
-
-  function create_options( $field )
-  {
-    // vars
-    $key = $field['name'];
-    // echo $this->tpl_helper( 'create-options', array(
-
-    // ) );
   }
 
 
@@ -143,131 +121,51 @@ class ntz_acf_sortable extends acf_field {
   *  @return  $value  - the modified value
   */
 
-  function format_value( $value, $post_id, $field )
-  {
+  function format_value( $value, $post_id, $field ){
     $new_value = array();
 
-
-    // empty?
-    if( empty($value) )
-    {
+    if( empty($value) ){
       return $value;
     }
 
 
-    // find attachments (DISTINCT POSTS)
-    $attachments = get_posts(array(
-      'post_type' => 'attachment',
-      'numberposts' => -1,
-      'post_status' => null,
-      'post__in' => $value,
-    ));
+    foreach( $value['image'] as $key => $image_id ){
+      $image_size_1 = $image_size_2 = $image_size_3 = $image_size_4 = null;
 
-    $ordered_attachments = array();
-    foreach( $attachments as $attachment)
-    {
-      // create array to hold value data
-      $ordered_attachments[ $attachment->ID ] = array(
-        'id'      =>  $attachment->ID,
-        'alt'     =>  get_post_meta($attachment->ID, '_wp_attachment_image_alt', true),
-        'title'     =>  $attachment->post_title,
-        'caption'   =>  $attachment->post_excerpt,
-        'description' =>  $attachment->post_content,
-        'mime_type'   =>  $attachment->post_mime_type,
-      );
+      if( !empty( $image_id ) ){
+        $image_size_1 = wp_get_attachment_image_src( $image_id, 'column-layout-1' );
+        $image_size_1 = $image_size_1[0];
 
-    }
+        $image_size_2 = wp_get_attachment_image_src( $image_id, 'column-layout-2' );
+        $image_size_2 = $image_size_2[0];
 
+        $image_size_3 = wp_get_attachment_image_src( $image_id, 'column-layout-3' );
+        $image_size_3 = $image_size_3[0];
 
-    // override value array with attachments
-    foreach( $value as $v)
-    {
-      if( isset($ordered_attachments[ $v ]) )
-      {
-        $new_value[] = $ordered_attachments[ $v ];
+        $image_size_4 = wp_get_attachment_image_src( $image_id, 'column-layout-4' );
+        $image_size_4 = $image_size_4[0];
+
       }
+
+      $new_value[] = array(
+        "image_size_1"       => $image_size_1,
+        "image_size_2"       => $image_size_2,
+        "image_size_3"       => $image_size_3,
+        "image_size_4"       => $image_size_4,
+        "colspan"            => $value['colspan'][$key],
+        "url"                => $value['external_url'][$key],
+        "image_id"           => $image_id,
+
+        "open_in_new_window" => selected( $value['open_in_new_window'][$key], 1, false ),
+        "colspan_1_selected" => selected( $value['colspan'][$key], 1, false ),
+        "colspan_2_selected" => selected( $value['colspan'][$key], 2, false ),
+        "colspan_3_selected" => selected( $value['colspan'][$key], 3, false ),
+        "colspan_4_selected" => selected( $value['colspan'][$key], 4, false ),
+      );
     }
 
-
-    // return value
     return $new_value;
   }
-
-
-  /*
-  *  format_value_for_api()
-  *
-  *  This filter is appied to the $value after it is loaded from the db and before it is passed back to the api functions such as the_field
-  *
-  *  @type  filter
-  *  @since 3.6
-  *  @date  23/01/13
-  *
-  *  @param $value  - the value which was loaded from the database
-  *  @param $post_id - the $post_id from which the value was loaded
-  *  @param $field  - the field array holding all the field options
-  *
-  *  @return  $value  - the modified value
-  */
-
-  function format_value_for_api( $value, $post_id, $field )
-  {
-    $value = $this->format_value( $value, $post_id, $field );
-
-    // find all image sizes
-    $image_sizes = get_intermediate_image_sizes();
-
-
-    if( $value )
-    {
-      foreach( $value as $k => $v )
-      {
-        if( strpos($v['mime_type'], 'image') !== false )
-        {
-          // is image
-          $src = wp_get_attachment_image_src( $v['id'], 'full' );
-
-          $value[ $k ]['url'] = $src[0];
-          $value[ $k ]['width'] = $src[1];
-          $value[ $k ]['height'] = $src[2];
-
-
-          // sizes
-          if( $image_sizes )
-          {
-            $value[$k]['sizes'] = array();
-
-            foreach( $image_sizes as $image_size )
-            {
-              // find src
-              $src = wp_get_attachment_image_src( $v['id'], $image_size );
-
-              // add src
-              $value[ $k ]['sizes'][ $image_size ] = $src[0];
-              $value[ $k ]['sizes'][ $image_size . '-width' ] = $src[1];
-              $value[ $k ]['sizes'][ $image_size . '-height' ] = $src[2];
-            }
-            // foreach( $image_sizes as $image_size )
-          }
-          // if( $image_sizes )
-        }
-        else
-        {
-          // is file
-          $src = wp_get_attachment_url( $v['id'] );
-
-          $value[ $k ]['url'] = $src;
-        }
-      }
-      // foreach( $value as $k => $v )
-    }
-    // if( $value )
-
-
-    // return value
-    return $value;
-  }
-
 }
 
 new ntz_acf_sortable();
