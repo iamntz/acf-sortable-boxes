@@ -1,22 +1,27 @@
 
 
 jQuery(document).ready(function($){
-  var sortableWrapper = $('.js-ntzSortableLayout');
 
-  sortableWrapper.sortable({
-    forceHelperSize     : true,
-    forcePlaceholderSize: true,
-    placeholder         : "sortableLayout__item-placeholder",
-    helper              : "clone",
-    revert : 200
-  });
+  function sortableInit( sortable ) {
+    if( sortable.is( ':ui-sortable') ){ return; }
+    sortable.sortable({
+      forceHelperSize     : true,
+      forcePlaceholderSize: true,
+      placeholder         : "sortableLayout__item-placeholder",
+      helper              : "clone",
+      revert : 200
+    });
+  }//sortableInit
 
-  sortableWrapper.on('click', '.js-sortableLayout__flipper', function(){
+  sortableInit( $('.js-ntzSortableLayout') );
+
+  $(document).on('click', '.js-sortableLayout__flipper', function(){
     $(this).closest('.js-sortableLayout__item').toggleClass('flipped');
     return false;
   });
 
-  sortableWrapper.on('click', '.js-uploader', function(){
+
+  $(document).on('click', '.js-ntzSortableLayout .js-uploader', function(){
     var $this = $(this);
     var parent = $this.closest('.js-sortableLayout__item');
     var target = $this.next();
@@ -39,7 +44,7 @@ jQuery(document).ready(function($){
   });
 
 
-  sortableWrapper.on('change', '.js-sortableLayout__changeSize', function(){
+  $(document).on('change', '.js-sortableLayout__changeSize', function(){
     var parent = $(this).closest('.js-sortableLayout__item');
     if( this.value == 'x' ){
       if( confirm( "Are you sure you want to delete this tile?" ) ){
@@ -52,10 +57,14 @@ jQuery(document).ready(function($){
     }
   });
 
-  $('.js-sortableLayout__addItem').on('click', function(){
-    var itemTpl = $(this).parent().next('.ntz-sortableLayoutItem').html();
 
-    $(itemTpl).appendTo( sortableWrapper );
+  $(document).on('click', '.js-sortableLayout__addItem', function(){
+    var wrapper = $(this).closest('.js-sortableLayoutWrapper');
+    var itemTpl = $('.ntz-sortableLayoutItem', wrapper).html();
+
+    var sortable = $('.js-ntzSortableLayout', wrapper);
+    $(itemTpl).appendTo( sortable );
+    sortableInit( sortable );
     return false;
   });
 });

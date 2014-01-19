@@ -1,11 +1,13 @@
-<div class="sortableLayout clearfix js-ntzSortableLayout">
-  {{#items}}
+<div class="js-sortableLayoutWrapper">
+  <div class="sortableLayout clearfix js-ntzSortableLayout">
+    {{#items}}
+      {{>sortable-item}}
+    {{/items}}
+
+  </div><!-- /.sortableLayout -->
+  <p style="text-align:center"><a href="#" class="button-primary js-sortableLayout__addItem">Add Tile</a></p>
+
+  <script type="text/template" class="ntz-sortableLayoutItem">
     {{>sortable-item}}
-  {{/items}}
-
-</div><!-- /.sortableLayout -->
-<p style="text-align:center"><a href="#" class="button-primary js-sortableLayout__addItem">Add Tile</a></p>
-
-<script type="text/template" class="ntz-sortableLayoutItem">
-  {{>sortable-item}}
+  </script>
 </script>
