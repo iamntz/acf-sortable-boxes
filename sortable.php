@@ -147,7 +147,7 @@ class ntz_acf_sortable extends acf_field {
 
       }
 
-      $new_value[] = array(
+      $parsed_value = array(
         "image_size_1"       => $image_size_1,
         "image_size_2"       => $image_size_2,
         "image_size_3"       => $image_size_3,
@@ -162,6 +162,8 @@ class ntz_acf_sortable extends acf_field {
         "colspan_3_selected" => selected( $value['colspan'][$key], 3, false ),
         "colspan_4_selected" => selected( $value['colspan'][$key], 4, false ),
       );
+
+      $new_value[] = apply_filters( 'ntz-acf-sortable/formatted-value', $parsed_value );
     }
 
     return $new_value;
