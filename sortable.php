@@ -168,6 +168,11 @@ class ntz_acf_sortable extends acf_field {
 
     return $new_value;
   }
+
+
+  function format_value_for_api( $value, $post_id, $field ) {
+    return $this->format_value( $value, $post_id, $field );
+  }
 }
 
 new ntz_acf_sortable();
